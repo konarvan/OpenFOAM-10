@@ -1,7 +1,8 @@
 {
     volScalarField& he = thermo.he();
 
-    volScalarField Cp = thermo.Cp(T);
+    volScalarField& T = thermo.T();
+    volScalarField Cp = thermo.Cp();
 
     fvScalarMatrix EEqn
     (
@@ -44,7 +45,7 @@
             IOobject::AUTO_WRITE
         ),
         (thermophysicalTransport.divq(Cp * T) / T)
-      + (turbulence.muEff() / T) * magSqr(fvc::grad(U))
+      + (turbulence.nuEff() / T) * magSqr(fvc::grad(U))
     );
 
     Sgen.write();
