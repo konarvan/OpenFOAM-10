@@ -22,7 +22,7 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Application
-    chtMultiRegionFoam
+    customCHTMultiRegionFoam
 
 Description
     Solver for steady or transient fluid flow and solid heat conduction, with

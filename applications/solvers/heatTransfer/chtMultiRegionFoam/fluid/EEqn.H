@@ -1,15 +1,13 @@
 {
     volScalarField& he = thermo.he();
 
-    volScalarField Cp = thermo.Cp(T);
-
     fvScalarMatrix EEqn
     (
-        fvm::ddt(rho, Cp * T)
+        fvm::ddt(rho, he)
       + (
             mvConvection.valid()
-          ? mvConvection->fvmDiv(phi, Cp * T)
-          : fvm::div(phi, Cp * T)
+          ? mvConvection->fvmDiv(phi, he)
+          : fvm::div(phi, he)
         )
       + fvc::ddt(rho, K) + fvc::div(phi, K)
       + (
@@ -19,11 +17,11 @@
             : fvc::div(fvc::absolute(phi, rho, U), p/rho)
           : -dpdt
         )
-      + thermophysicalTransport.divq(Cp * T)
+      + thermophysicalTransport.divq(he)
      ==
         rho*(U&g)
       + reaction.Qdot()
-      + fvModels.source(rho, Cp * T)
+      + fvModels.source(rho, he)
     );
 
     EEqn.relax();
@@ -31,23 +29,6 @@
     fvConstraints.constrain(EEqn);
 
     EEqn.solve();
-
-    // Calculate entropy generation
-    volScalarField Sgen
-    (
-        IOobject
-        (
-            "Sgen",
-            runTime.timeName(),
-            mesh,
-            IOobject::NO_READ,
-            IOobject::AUTO_WRITE
-        ),
-        (thermophysicalTransport.divq(Cp * T) / T)
-      + (turbulence.muEff() / T) * magSqr(fvc::grad(U))
-    );
-
-    Sgen.write();
 
     fvConstraints.constrain(he);
 
