@@ -6,7 +6,7 @@
 
     fvScalarMatrix EEqn
     (
-        fvm::ddt(rho, Cp() * T)
+        fvm::ddt(rho, Cp * T)
       + (
             mvConvection.valid()
           ? mvConvection->fvmDiv(phi, Cp * T)
