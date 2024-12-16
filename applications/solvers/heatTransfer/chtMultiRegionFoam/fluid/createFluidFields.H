@@ -39,14 +39,9 @@ forAll(fluidRegions, i)
     dimensionedVector CpCoeffs
     dimensionedVector CpCoeffs
     (
-        IOobject
-        (
-            "CpCoeffs",
-            runTime.constant(),
-            fluidRegions[i],
-            IOobject::MUST_READ,
-            IOobject::NO_WRITE
-        )
+        "CpCoeffs",
+        dimensionSet(0, 2, -2, -1, 0, 0, 0), // Correct dimensions for Cp
+        vector(0, 0, 0) // Initialize with appropriate values
     );
 
     thermo->setCpCoeffs(CpCoeffs);
