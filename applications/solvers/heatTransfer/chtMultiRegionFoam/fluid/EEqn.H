@@ -32,6 +32,23 @@
 
     EEqn.solve();
 
+    // Calculate entropy generation
+    volScalarField Sgen
+    (
+        IOobject
+        (
+            "Sgen",
+            runTime.timeName(),
+            mesh,
+            IOobject::NO_READ,
+            IOobject::AUTO_WRITE
+        ),
+        (thermophysicalTransport.divq(Cp * T) / T)
+      + (turbulence.muEff() / T) * magSqr(fvc::grad(U))
+    );
+
+    Sgen.write();
+
     fvConstraints.constrain(he);
 
     thermo.correct();
