@@ -1,13 +1,15 @@
 {
     volScalarField& he = thermo.he();
 
+    volScalarField Cp = thermo.Cp(T);
+
     fvScalarMatrix EEqn
     (
-        fvm::ddt(rho, he)
+        fvm::ddt(rho, Cp * T)
       + (
             mvConvection.valid()
-          ? mvConvection->fvmDiv(phi, he)
-          : fvm::div(phi, he)
+          ? mvConvection->fvmDiv(phi, Cp * T)
+          : fvm::div(phi, Cp * T)
         )
       + fvc::ddt(rho, K) + fvc::div(phi, K)
       + (
@@ -17,11 +19,11 @@
             : fvc::div(fvc::absolute(phi, rho, U), p/rho)
           : -dpdt
         )
-      + thermophysicalTransport.divq(he)
+      + thermophysicalTransport.divq(Cp * T)
      ==
         rho*(U&g)
       + reaction.Qdot()
-      + fvModels.source(rho, he)
+      + fvModels.source(rho, Cp * T)
     );
 
     EEqn.relax();

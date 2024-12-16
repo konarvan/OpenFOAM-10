@@ -32,7 +32,23 @@ forAll(fluidRegions, i)
         << fluidRegions[i].name() << nl << endl;
 
     Info<< "    Adding to thermoFluid\n" << endl;
-    thermoFluid.set(i, fluidReactionThermo::New(fluidRegions[i]).ptr());
+    auto thermo = fluidReactionThermo::New(fluidRegions[i]);
+    thermoFluid.set(i, thermo.ptr());
+
+    // Read Cp polynomial coefficients
+    dimensionedVector CpCoeffs
+    (
+        IOobject
+        (
+            "CpCoeffs",
+            runTime.constant(),
+            fluidRegions[i],
+            IOobject::MUST_READ,
+            IOobject::NO_WRITE
+        )
+    );
+
+    thermo->setCpCoeffs(CpCoeffs);
 
     Info<< "    Adding to rhoFluid\n" << endl;
     rhoFluid.set
