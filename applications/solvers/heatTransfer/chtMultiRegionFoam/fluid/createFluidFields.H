@@ -37,7 +37,6 @@ forAll(fluidRegions, i)
 
     // Read Cp polynomial coefficients
     dimensionedVector CpCoeffs
-    dimensionedVector CpCoeffs
     (
         "CpCoeffs",
         dimensionSet(0, 2, -2, -1, 0, 0, 0), // Correct dimensions for Cp
