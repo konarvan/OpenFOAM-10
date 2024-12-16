@@ -38,14 +38,9 @@ forAll(fluidRegions, i)
     // Read Cp polynomial coefficients
     dimensionedVector CpCoeffs
     (
-        IOobject
-        (
-            "CpCoeffs",
-            runTime.constant(),
-            fluidRegions[i],
-            IOobject::MUST_READ,
-            IOobject::NO_WRITE
-        )
+        "CpCoeffs",
+        dimensionSet(0, 0, 0, 0, 0, 0, 0), // Adjust dimensions as needed
+        vector(0, 0, 0) // Initialize with appropriate values
     );
 
     thermo->setCpCoeffs(CpCoeffs);
