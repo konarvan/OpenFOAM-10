@@ -43,7 +43,6 @@ forAll(fluidRegions, i)
         vector(0, 0, 0) // Initialize with appropriate values
     );
 
-    thermo->setCpCoeffs(CpCoeffs);
 
     Info<< "    Adding to rhoFluid\n" << endl;
     rhoFluid.set
