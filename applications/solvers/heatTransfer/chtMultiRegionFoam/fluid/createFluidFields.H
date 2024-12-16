@@ -50,6 +50,21 @@ forAll(fluidRegions, i)
 
     thermo->setCpCoeffs(CpCoeffs);
 
+    // Read Cp polynomial coefficients
+    dimensionedVector CpCoeffs
+    (
+        IOobject
+        (
+            "CpCoeffs",
+            runTime.constant(),
+            fluidRegions[i],
+            IOobject::MUST_READ,
+            IOobject::NO_WRITE
+        )
+    );
+
+    thermo->setCpCoeffs(CpCoeffs);
+
     Info<< "    Adding to rhoFluid\n" << endl;
     rhoFluid.set
     (
