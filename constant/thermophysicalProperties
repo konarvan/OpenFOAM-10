@@ -1,0 +1,32 @@
+thermoType
+{
+    type            hePsiThermo;
+    mixture         pureMixture;
+    transport       constIso;
+    thermo          polynomialCpThermo;
+    equationOfState perfectGas;
+    specie          specie;
+    energy          sensibleEnthalpy;
+}
+
+mixture
+{
+    specie
+    {
+        nMoles          1;
+        molWeight       28.96;
+    }
+    thermodynamics
+    {
+        CpCoeffs
+        {
+            coefficients (1000 0.1 0.0002 0 0 0 0 0);
+        }
+        Hf              0;
+    }
+    transport
+    {
+        mu              1e-5;
+        Pr              0.7;
+    }
+}
