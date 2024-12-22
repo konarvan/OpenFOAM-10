@@ -24,7 +24,13 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "phaseChangeCpThermo.H"
-#include "addToRunTimeSelectionTable.H"
+#include "makeThermo.H"
+
+#include "specie.H"
+#include "rhoConst.H"
+#include "perfectGas.H"
+#include "hConstThermo.H"
+#include "janafThermo.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -35,11 +41,18 @@ namespace species
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-addToRunTimeSelectionTable
+makeSpecieThermo
 (
-    thermo,
-    phaseChangeCpThermo<hePsiThermo<pureMixture<constIsoThermo<specie>>, sensibleEnthalpy>>,
-    hePsiThermo
+    phaseChangeCpThermo,
+    rhoConst,
+    hConstThermo
+);
+
+makeSpecieThermo
+(
+    phaseChangeCpThermo,
+    perfectGas,
+    janafThermo
 );
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

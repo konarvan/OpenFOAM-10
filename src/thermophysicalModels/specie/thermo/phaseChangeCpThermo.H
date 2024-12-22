@@ -36,10 +36,7 @@ SourceFiles
 #ifndef phaseChangeCpThermo_H
 #define phaseChangeCpThermo_H
 
-#include "polynomialCpThermo.H"
-#include "List.H"
-#include "mathematicalConstants.H"
-#include "error.H"
+#include "thermo.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -48,12 +45,19 @@ namespace Foam
 namespace species
 {
 
-template<class Thermo, template<class> class Type>
+/*---------------------------------------------------------------------------*\
+                      Class phaseChangeCpThermo Declaration
+\*---------------------------------------------------------------------------*/
+
+template<class Thermo>
 class phaseChangeCpThermo
 :
-    public polynomialCpThermo<Thermo, Type>
+    public Thermo
 {
-    // Private Data
+    // Private member typedefs
+    typedef phaseChangeCpThermo<Thermo> phaseChangeCpThermoType;
+
+    // Private data
 
         //- Phase change temperatures
         List<scalar> phaseTemp_;
@@ -67,11 +71,33 @@ class phaseChangeCpThermo
 
 public:
 
+    //- Runtime type information
+    TypeName("phaseChangeCpThermo");
+
     // Constructors
 
+        //- Construct from components
+        inline phaseChangeCpThermo(const Thermo& t)
+        :
+            Thermo(t),
+            phaseTemp_(),
+            latentHeat_(),
+            deltaT_()
+        {}
+
+        //- Construct as copy
+        inline phaseChangeCpThermo(const phaseChangeCpThermo& pt)
+        :
+            Thermo(pt),
+            phaseTemp_(pt.phaseTemp_),
+            latentHeat_(pt.latentHeat_),
+            deltaT_(pt.deltaT_)
+        {}
+
+        //- Construct from dictionary
         phaseChangeCpThermo(const dictionary& dict)
         :
-            polynomialCpThermo<Thermo, Type>(dict),
+            Thermo(dict),
             phaseTemp_(dict.lookup("phaseTemp")),
             latentHeat_(dict.lookup("latentHeat")),
             deltaT_(dict.lookupOrDefault<List<scalar>>("deltaT", List<scalar>(phaseTemp_.size(), 1.0)))
@@ -137,13 +163,75 @@ public:
             }
         }
 
+        //- Clone
+        inline autoPtr<phaseChangeCpThermo> clone() const
+        {
+            return autoPtr<phaseChangeCpThermo>
+            (
+                new phaseChangeCpThermo(*this)
+            );
+        }
+
+
+    //- Destructor
+    virtual ~phaseChangeCpThermo()
+    {}
+
 
     // Member Functions
 
-        //- Heat capacity at constant pressure [J/(kmol K)]
-        scalar Cp(const scalar p, const scalar T) const
+        //- Return the instantiated type name
+        static word typeName()
         {
-            const scalar baseCp = polynomialCpThermo<Thermo, Type>::Cp(p, T);
+            return "phaseChangeCpThermo<" + Thermo::typeName() + '>';
+        }
+
+        //- Return the name of the thermo physics
+        word thermoName() const
+        {
+            return typeName();
+        }
+
+        //- Return the molecular weight [kg/kmol]
+        scalar W() const
+        {
+            return Thermo::W();
+        }
+
+        //- Return the formation enthalpy [J/kmol]
+        scalar Hf() const
+        {
+            return Thermo::Hf();
+        }
+
+        //- Return entropy [J/(kmol K)]
+        scalar S(const scalar p, const scalar T) const
+        {
+            return Thermo::S(p, T);
+        }
+
+        //- Return compressibility rho/p [s^2/m^2]
+        scalar psi(const scalar p, const scalar T) const
+        {
+            return Thermo::psi(p, T);
+        }
+
+        //- Return compression factor []
+        scalar Z(const scalar p, const scalar T) const
+        {
+            return Thermo::Z(p, T);
+        }
+
+        //- Return (Cp - Cv)/Cp = (gamma - 1)/gamma
+        scalar CpByCv(const scalar p, const scalar T) const
+        {
+            return Thermo::CpByCv(p, T);
+        }
+
+        //- Heat capacity at constant pressure [J/(kmol K)]
+        virtual scalar Cp(const scalar p, const scalar T) const
+        {
+            const scalar baseCp = Thermo::Cp(p, T);
 
             // Add latent heat contributions using Gaussian distributions
             // around each phase change point to smooth the transitions
@@ -166,7 +254,7 @@ public:
         //- Sensible enthalpy [J/kmol]
         scalar Hs(const scalar p, const scalar T) const
         {
-            const scalar baseHs = polynomialCpThermo<Thermo, Type>::Hs(p, T);
+            const scalar baseHs = Thermo::Hs(p, T);
 
             // Add latent heat contributions
             scalar additionalH = 0.0;
@@ -248,7 +336,7 @@ public:
         //- Write to Ostream
         void write(Ostream& os) const
         {
-            polynomialCpThermo<Thermo, Type>::write(os);
+            Thermo::write(os);
             
             os.writeKeyword("phaseTemp") << phaseTemp_ << token::END_STATEMENT << nl;
             os.writeKeyword("latentHeat") << latentHeat_ << token::END_STATEMENT << nl;
