@@ -29,7 +29,7 @@ Description
     latent heat effects during phase changes.
 
 SourceFiles
-    phaseChangeCpThermoI.H
+    phaseChangeCpThermo.C
 
 \*---------------------------------------------------------------------------*/
 
