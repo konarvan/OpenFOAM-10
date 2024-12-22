@@ -40,6 +40,9 @@ solaris*Gcc*/
 SunOS*Gcc*/
 platforms/
 
+# VS code directories - anywhere
+.vscode/*
+
 # Reinstate wmake/rules that might look like build directories
 !wmake/rules/*/
 
