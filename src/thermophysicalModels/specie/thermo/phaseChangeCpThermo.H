@@ -37,6 +37,13 @@ SourceFiles
 #define phaseChangeCpThermo_H
 
 #include "thermo.H"
+#include "scalar.H"
+#include "word.H"
+#include <cmath>
+#include "mathematicalConstants.H"
+#include "runTimeSelectionTables.H"
+#include "basicThermo.H"
+using namespace Foam::constant::mathematical;
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -73,6 +80,16 @@ public:
 
     //- Runtime type information
     TypeName("phaseChangeCpThermo");
+
+    // Declare run-time constructor selection table
+    declareRunTimeSelectionTable
+    (
+        autoPtr,
+        phaseChangeCpThermo,
+        fvMesh,
+        (const fvMesh& mesh, const word& phaseName),
+        (mesh, phaseName)
+    );
 
     // Constructors
 
@@ -180,16 +197,11 @@ public:
 
     // Member Functions
 
-        //- Return the instantiated type name
-        static word typeName()
-        {
-            return "phaseChangeCpThermo<" + Thermo::typeName() + '>';
-        }
 
         //- Return the name of the thermo physics
         word thermoName() const
         {
-            return typeName();
+            return typeName;
         }
 
         //- Return the molecular weight [kg/kmol]
@@ -241,7 +253,7 @@ public:
             {
                 if (mag(T - phaseTemp_[i]) < deltaT_[i])
                 {
-                    scalar alpha = 1.0/(deltaT_[i]*sqrt(2.0*constant::mathematical::pi));
+                    scalar alpha = 1.0/(deltaT_[i]*sqrt(2.0*pi));
                     scalar beta = -0.5*sqr((T - phaseTemp_[i])/deltaT_[i]);
                     
                     additionalCp += latentHeat_[i]*alpha*exp(beta);
@@ -286,7 +298,7 @@ public:
         {
             // Use Newton-Raphson iteration to find temperature
             scalar T = T0;
-            scalar Hn = Ha(p, T);
+            scalar Hn = this->Ha(p, T);
             scalar dT = T;
             label iter = 0;
             const label maxIter = 100;
@@ -297,7 +309,7 @@ public:
                 const scalar Cp = this->Cp(p, T);
                 dT = (H - Hn)/Cp;
                 T += dT;
-                Hn = Ha(p, T);
+                Hn = this->Ha(p, T);
                 iter++;
             }
 

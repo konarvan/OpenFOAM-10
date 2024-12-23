@@ -24,6 +24,9 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "thermo.H"
+#include "IOstreams.H"
+#include "primitiveFields.H"
+#include "scalar.H"
 #include "IOmanip.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //

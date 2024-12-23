@@ -38,6 +38,8 @@ SourceFiles
 #ifndef thermo_H
 #define thermo_H
 
+#include "scalar.H" // LLM addition
+#include "dictionary.H" // LLM addition
 #include "thermodynamicConstants.H"
 using namespace Foam::constant::thermodynamic;
 
@@ -94,10 +96,10 @@ class thermo
     // Private Data
 
         //- Convergence tolerance of energy -> temperature inversion functions
-        static const scalar tol_;
+        static const Foam::scalar tol_;
 
         //- Max number of iterations in energy->temperature inversion functions
-        static const int maxIter_;
+        static const Foam::label maxIter_;
 
 
 public:

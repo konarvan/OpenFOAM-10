@@ -24,6 +24,8 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "phaseChangeCpThermo.H"
+#include "scalar.H"
+#include "word.H"
 #include "makeThermo.H"
 
 #include "specie.H"
@@ -41,19 +43,16 @@ namespace species
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-makeSpecieThermo
-(
-    phaseChangeCpThermo,
-    rhoConst,
-    hConstThermo
-);
+namespace addToRunTimeSelectionTableFns
+{
+    typedef phaseChangeCpThermo<rhoConst<hConstThermo<specie>>> rhoConstHConstThermoPhaseChangeCpThermo;
+    typedef phaseChangeCpThermo<perfectGas<janafThermo<specie>>> perfectGasJanafThermoPhaseChangeCpThermo;
 
-makeSpecieThermo
-(
-    phaseChangeCpThermo,
-    perfectGas,
-    janafThermo
-);
+    addToRunTimeSelectionTable(basicThermo, rhoConstHConstThermoPhaseChangeCpThermo, fvMesh);
+    addToRunTimeSelectionTable(fluidThermo, rhoConstHConstThermoPhaseChangeCpThermo, fvMesh);
+    addToRunTimeSelectionTable(basicThermo, perfectGasJanafThermoPhaseChangeCpThermo, fvMesh);
+    addToRunTimeSelectionTable(fluidThermo, perfectGasJanafThermoPhaseChangeCpThermo, fvMesh);
+}
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

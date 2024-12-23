@@ -2,6 +2,8 @@
 #define polynomialCpThermo_H
 
 #include "thermo.H"
+#include "scalar.H"
+#include "word.H"
 #include "Polynomial.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
